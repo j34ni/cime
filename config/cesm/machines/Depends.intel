@@ -26,6 +26,9 @@ dSFMT.o \
 dSFMT_utils.o \
 kissvec.o
 
+CCSM_DRIVER_OBJS=\
+cime_driver.o
+
 ifeq ($(DEBUG),FALSE)
   $(PERFOBJS): %.o: %.F90
 	  $(FC) -c $(INCLDIR) $(INCS) $(FFLAGS) $(FREEFLAGS)  -O3  -no-prec-div $<
@@ -37,4 +40,6 @@ ifeq ($(DEBUG),FALSE)
 	  $(FC) -c $(INCLDIR) $(INCS) $(FFLAGS) $(FREEFLAGS) -O3 -fp-model fast -no-prec-div -no-prec-sqrt -qoverride-limits $<
   $(SHR_RANDNUM_C_OBJS): %.o: %.c
 	  $(CC) -c $(INCLDIR) $(INCS) $(CFLAGS) -O3 -fp-model fast $<
+  $(CCSM_DRIVER_OBJS): %.o: %.F90
+	  $(FC) -c $(INCLDIR) $(INCS) -qno-opt-dynamic-align  -convert big_endian -assume byterecl -ftz -traceback -assume realloc_lhs -fp-model source -O2 $(SLIBS) $(CPPDEFS) -free  -DUSE_CONTIGUOUS= $<
 endif
